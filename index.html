@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nikumaru Games — Legal</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Nikumaru Games</h1>
+    <nav class="nav" aria-label="法律文档选择">
+      <button id="btn-tos" class="nav-btn">Terms of Service</button>
+      <button id="btn-privacy" class="nav-btn">Privacy Policy</button>
+    </nav>
+
+    <section id="content" class="content" aria-live="polite">
+      <p>请选择上方一项以查看对应内容。</p>
+    </section>
+  </main>
+
+  <script>
+    async function loadAndShow(path) {
+      try {
+        const res = await fetch(path);
+        if (!res.ok) throw new Error('加载失败: ' + res.status);
+        const text = await res.text();
+        document.getElementById('content').innerHTML = text;
+      } catch (err) {
+        document.getElementById('content').innerHTML =
+          '<p class="error">无法加载内容：' + err.message + '</p>';
+      }
+    }
+
+    document.getElementById('btn-tos').addEventListener('click', () => {
+      loadAndShow('tos');
+      history.replaceState(null, '', '/tos');
+    });
+    document.getElementById('btn-privacy').addEventListener('click', () => {
+      loadAndShow('privacy');
+      history.replaceState(null, '', '/privacy');
+    });
+
+    (function handleDirectPath() {
+      const p = location.pathname.replace(/\/+$/, '');
+      if (p.endsWith('/privacy')) {
+        loadAndShow('privacy');
+      } else if (p.endsWith('/tos')) {
+        loadAndShow('tos');
+      }
+    })();
+  </script>
+</body>
+</html>
